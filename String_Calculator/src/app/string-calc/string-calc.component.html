@@ -1,0 +1,11 @@
+  <div class="calculator-background">
+    <div class="calculator-container">
+      <h1>String Calculator</h1>
+      <!-- #numbersInput is used as a template reference variable -->
+      <input type="text"  #numbersInput placeholder="Enter your string expression" (keydown.enter)="calculateSum(numbersInput.value)" />
+      <button (click)="calculateSum(numbersInput.value)">Calculate Sum</button>
+      <div *ngIf="result !== null">
+        <h2>Result: {{ result }}</h2>
+      </div> 
+    </div>
+  </div>
