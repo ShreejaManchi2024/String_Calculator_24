@@ -4,32 +4,32 @@ import { Injectable } from '@angular/core';
   providedIn: 'root'
 })
 export class CalcOperationsService {
-  add(numbers: string): number {
-    if (!numbers) return 0;
+  sumNumbers(input: string): { sum: number, warnings: string[] } {
+    const { numbers, warnings } = this.sanitizeAndParseNumbers(input);
 
-    let delimiter = /,|\n/; // Default delimiter
+    // Calculate the sum of the numbers
+    const sum = numbers.reduce((acc, num) => acc + num, 0);
 
-    // Check for custom delimiter
-    const customDelimiterMatch = numbers.match(/^\/\/(.*)\n/);
-    if (customDelimiterMatch) {
-        delimiter = new RegExp(customDelimiterMatch[1].replace(/[\[\]]/g, ''));
-        numbers = numbers.replace(customDelimiterMatch[0], '');
-    }
+    return { sum, warnings };
+  }
 
-    const numArray = numbers.split(delimiter);
-    const negatives = [];
+  private sanitizeAndParseNumbers(input: string): { numbers: number[], warnings: string[] } {
+    // Replace various delimiters with a common delimiter (e.g., a comma) and trim extra whitespace
+    const sanitizedInput = input
+      .replace(/[\s\\n\r\f;:.\/|(){}\[\]'"`~@#\$%\^&\*\+\=\<\>\?]+/g, ',') // Replace delimiters with comma
+      .replace(/,+/g, ',') // Replace multiple commas with a single comma
+      .trim(); // Remove any extra whitespace
 
-    const sum = numArray.reduce((acc, num) => {
-        const number = parseInt(num);
-        if (isNaN(number)) return acc;
-        if (number < 0) negatives.push(number);
-        return acc + number;
-    }, 0);
+    // Split the sanitized input into an array of strings, then parse each string to a number
+    const numbers = sanitizedInput.split(',')
+      .map(str => parseFloat(str.trim()))
+      .filter(num => !isNaN(num)); // Filter out any NaN values
 
-    if (negatives.length) {
-        throw new Error(`Negative numbers not allowed: ${negatives.join(', ')}`);
-    }
+    // Identify any negative numbers and generate warnings
+    const warnings = numbers
+      .filter(num => num < 0)
+      .map(num => `Negative numbers are not allowed: ${num}`);
 
-    return sum;
-}
+    return { numbers, warnings };
+  }
 }

@@ -1,11 +1,20 @@
-  <div class="calculator-background">
+<div class="calculator-background">
     <div class="calculator-container">
       <h1>String Calculator</h1>
       <!-- #numbersInput is used as a template reference variable -->
-      <input type="text"  #numbersInput placeholder="Enter your string expression" (keydown.enter)="calculateSum(numbersInput.value)" />
-      <button (click)="calculateSum(numbersInput.value)">Calculate Sum</button>
-      <div *ngIf="result !== null">
+      <input type="text" [(ngModel)]="input" placeholder="Enter your string expression" (keydown.enter)="calculate()" />
+      <button (click)="calculate()">Calculate Sum</button>
+  
+      <!-- Display warnings if any -->
+      <div *ngIf="warnings.length > 0">
+        <div *ngFor="let warning of warnings">
+          <h2 class="error"><p>{{ warning }}</p></h2>
+        </div>
+      </div>
+  
+      <!-- Display result if showResult is true and no warnings are present -->
+      <div *ngIf="showResult">
         <h2>Result: {{ result }}</h2>
       </div> 
     </div>
-  </div>
+  </div>  

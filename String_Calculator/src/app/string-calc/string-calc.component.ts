@@ -7,18 +7,18 @@ import { CalcOperationsService } from 'src/services/calc-operations.service';
   styleUrls: ['./string-calc.component.scss']
 })
 export class StringCalcComponent {
-  result: number | null = null;
-  errorMessage: string | null = null;
+  input: string = '';
+  result: number = 0;
+  warnings: string[] = [];
+  showResult: boolean = false;
 
-  constructor(private Calculator_Operations : CalcOperationsService){}
-
-  calculateSum(numbers: string): void {
-    try {
-      this.result = this.Calculator_Operations.add(numbers);
-      this.errorMessage = null;
-    } catch (error) {
-      this.result = null;
-      this.errorMessage = error.message;
-    }
+  constructor(private calculatorOperations: CalcOperationsService) {}
+  
+  calculate(): void {
+    const { sum, warnings } = this.calculatorOperations.sumNumbers(this.input);
+    this.result = sum;
+    this.warnings = warnings;
+    this.showResult = warnings.length === 0; // Show result only if there are no warnings
   }
+
 }
